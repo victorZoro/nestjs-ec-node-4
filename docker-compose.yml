@@ -1,0 +1,20 @@
+services:
+  mysqldb:
+    image: mysql:8.0
+    container_name: universitydb
+    restart: unless-stopped
+    volumes:
+      - ./config/init.sql:/docker-entrypoint-config.d/init.sql
+      - mysqldb:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_USER: ${MYSQL_ROOT_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      SERVICE_NAME: mysqldb
+
+volumes:
+  mysqldb:
