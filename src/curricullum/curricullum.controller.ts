@@ -1,6 +1,15 @@
-import { Controller, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { CurricullumService } from './curricullum.service';
+import { CurricullumDto } from './dto/curricullum.dto';
 
 @Controller('curricullums')
 export class CurricullumController {
@@ -8,8 +17,8 @@ export class CurricullumController {
   @Get()
   async findAll(@Res() res: Response): Promise<any> {
     try {
-      const curricullum = this.curricullumService.findAll();
-      res.status(HttpStatus.OK).json(curricullum);
+      const curricullums = await this.curricullumService.findAll();
+      res.status(HttpStatus.OK).json(curricullums);
     } catch (err) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -37,6 +46,23 @@ export class CurricullumController {
   async create(@Res() res: Response): Promise<any> {
     try {
       const curricullum = await this.curricullumService.create();
+      res.status(HttpStatus.OK).send(curricullum);
+    } catch (err) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: err.message,
+      });
+    }
+  }
+
+  @Post('add')
+  async addSubject(
+    @Body() curricullumDto: CurricullumDto,
+    @Res() res: Response,
+  ): Promise<any> {
+    try {
+      const curricullum =
+        await this.curricullumService.addSubject(curricullumDto);
       res.status(HttpStatus.OK).send(curricullum);
     } catch (err) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
