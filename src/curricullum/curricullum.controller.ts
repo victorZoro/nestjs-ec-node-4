@@ -1,15 +1,6 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  Param,
-  Post,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { CurricullumService } from './curricullum.service';
-import { CreateCurricullumDto } from './dto/create-curricullum.dto';
 
 @Controller('curricullums')
 export class CurricullumController {
@@ -43,13 +34,9 @@ export class CurricullumController {
   }
 
   @Post()
-  async create(
-    @Body() createCurricullumDto: CreateCurricullumDto,
-    @Res() res: Response,
-  ): Promise<any> {
+  async create(@Res() res: Response): Promise<any> {
     try {
-      const curricullum =
-        await this.curricullumService.create(createCurricullumDto);
+      const curricullum = await this.curricullumService.create();
       res.status(HttpStatus.OK).send(curricullum);
     } catch (err) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({

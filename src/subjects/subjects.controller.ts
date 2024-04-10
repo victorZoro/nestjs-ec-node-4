@@ -10,7 +10,6 @@ import {
 import { SubjectsService } from './subjects.service';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { Response } from 'express';
-import { concatMapTo } from 'rxjs';
 
 @Controller('subjects')
 export class SubjectsController {

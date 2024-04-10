@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../shared/services/prisma.service';
-import { CreateCurricullumDto } from './dto/create-curricullum.dto';
 
 @Injectable()
 export class CurricullumService {
@@ -23,13 +22,9 @@ export class CurricullumService {
     }
   }
 
-  async create(createCurricullumDto: CreateCurricullumDto) {
+  async create() {
     try {
-      return this.prisma.curricullums.create({
-        data: {
-          name: createCurricullumDto.name,
-        },
-      });
+      return this.prisma.curricullums.create({});
     } catch (err) {
       throw new Error(err);
     }
