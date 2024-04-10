@@ -6,20 +6,32 @@ import { CreateSubjectDto } from './dto/create-subject.dto';
 export class SubjectsService {
   constructor(private prisma: PrismaService) {}
   async findAll(): Promise<any> {
-    return this.prisma.subjects.findMany();
+    try {
+      return await this.prisma.subjects.findMany();
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 
   async findOne(id: number): Promise<any> {
-    return this.prisma.subjects.findUnique({
-      where: { id: id },
-    });
+    try {
+      return this.prisma.subjects.findUnique({
+        where: { id: id },
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 
   async create(createSubjectDto: CreateSubjectDto) {
-    return this.prisma.subjects.create({
-      data: {
-        name: createSubjectDto.name,
-      },
-    });
+    try {
+      return this.prisma.subjects.create({
+        data: {
+          name: createSubjectDto.name,
+        },
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 }

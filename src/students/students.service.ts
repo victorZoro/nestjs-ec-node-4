@@ -6,21 +6,33 @@ import { CreateStudentDto } from './dto/create-student.dto';
 export class StudentsService {
   constructor(private prisma: PrismaService) {}
   async findAll(): Promise<any> {
-    return this.prisma.students.findMany();
+    try {
+      return this.prisma.students.findMany();
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 
   async findOne(id: number): Promise<any> {
-    return this.prisma.students.findUnique({
-      where: { id: id },
-    });
+    try {
+      return this.prisma.students.findUnique({
+        where: { id: id },
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 
   async create(createStudentDto: CreateStudentDto) {
-    return this.prisma.students.create({
-      data: {
-        name: createStudentDto.name,
-        curricullumId: createStudentDto.curricullumId,
-      },
-    });
+    try {
+      return this.prisma.students.create({
+        data: {
+          name: createStudentDto.name,
+          curricullumId: createStudentDto.curricullumId,
+        },
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 }
