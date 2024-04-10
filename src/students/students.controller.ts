@@ -14,30 +14,20 @@ import { Response } from 'express';
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentService: StudentsService) {}
+
   @Get()
   async findAll(@Res() res: Response): Promise<any> {
-    try {
-      const students = this.studentService.findAll();
-      res.status(HttpStatus.OK).json(students);
-    } catch (err) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: err.message,
-      });
-    }
+    const students = await this.studentService.findAll();
+    res.status(HttpStatus.OK).json(students);
   }
 
   @Get(':id')
-  async findOne(@Param() params: any, @Res() res: Response): Promise<any> {
-    try {
-      const student = await this.studentService.findOne(Number(params.id));
-      res.status(HttpStatus.OK).send(student);
-    } catch (err) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: err.message,
-      });
-    }
+  async findOne(
+    @Param() params: ParamsById,
+    @Res() res: Response,
+  ): Promise<any> {
+    const student = await this.studentService.findOne(params.id);
+    res.status(HttpStatus.OK).send(student);
   }
 
   @Post()
@@ -45,14 +35,15 @@ export class StudentsController {
     @Body() createStudentDto: CreateStudentDto,
     @Res() res: Response,
   ): Promise<any> {
-    try {
-      const student = await this.studentService.create(createStudentDto);
-      res.status(HttpStatus.OK).send(student);
-    } catch (err) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: err.message,
-      });
-    }
+    const student = await this.studentService.create(createStudentDto);
+    res.status(HttpStatus.OK).send(student);
+  }
+
+  @Get(':id/subjects')
+  async findAllSubjects(@Param() params: ParamsById, @Res() res: Response) {
+    const studentSubjects = await this.studentService.findAllSubjects(
+      params.id,
+    );
+    res.status(HttpStatus.OK).json(studentSubjects);
   }
 }
