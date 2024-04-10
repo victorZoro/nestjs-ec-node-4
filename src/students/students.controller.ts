@@ -23,7 +23,7 @@ export class StudentsController {
 
   @Get(':id')
   async findOne(
-    @Param() params: ParamsById,
+    @Param() params: any,
     @Res() res: Response,
   ): Promise<any> {
     const student = await this.studentService.findOne(params.id);
