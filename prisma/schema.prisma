@@ -36,16 +36,16 @@ model students {
 
 model curricullum_subjects {
     id          Int      @id @default(autoincrement())
-    curricullum_id Int @unique
-    subject_id  Int @unique
-    curricullums curricullums @relation(fields: [curricullum_id], references: [id])
-    subjects subjects @relation(fields: [subject_id], references: [id])
+    curricullumId Int @unique
+    subjectId  Int @unique
+    curricullums curricullums @relation(fields: [curricullumId], references: [id])
+    subjects subjects @relation(fields: [subjectId], references: [id])
 }
 
 model student_subjects {
     id          Int      @id @default(autoincrement())
-    student_id  Int
-    subject_id  Int
-    students students @relation(fields: [student_id], references: [id])
-    subjects subjects @relation(fields: [subject_id], references: [id])
+    studentId  Int
+    subjectId  Int
+    students students @relation(fields: [studentId], references: [id])
+    subjects subjects @relation(fields: [subjectId], references: [id])
 }
