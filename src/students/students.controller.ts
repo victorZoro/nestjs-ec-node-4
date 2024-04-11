@@ -22,10 +22,7 @@ export class StudentsController {
   }
 
   @Get(':id')
-  async findOne(
-    @Param() params: any,
-    @Res() res: Response,
-  ): Promise<any> {
+  async findOne(@Param() params: any, @Res() res: Response): Promise<any> {
     const student = await this.studentService.findOne(params.id);
     res.status(HttpStatus.OK).send(student);
   }
@@ -40,7 +37,7 @@ export class StudentsController {
   }
 
   @Get(':id/subjects')
-  async findAllSubjects(@Param() params: ParamsById, @Res() res: Response) {
+  async findAllSubjects(@Param() params: any, @Res() res: Response) {
     const studentSubjects = await this.studentService.findAllSubjects(
       params.id,
     );
