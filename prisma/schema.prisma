@@ -27,25 +27,26 @@ model subjects {
 }
 
 model students {
-    id          Int      @id @default(autoincrement())
-    name        String
+    id            Int      @id @default(autoincrement())
+    name          String
     curricullumId Int
     curricullums curricullums @relation(fields: [curricullumId], references: [id])
     student_subjects student_subjects[]
 }
 
 model curricullum_subjects {
-    id          Int      @id @default(autoincrement())
-    curricullumId Int @unique
-    subjectId  Int @unique
+    id            Int      @id @default(autoincrement())
+    curricullumId Int
+    subjectId     Int      @unique
     curricullums curricullums @relation(fields: [curricullumId], references: [id])
     subjects subjects @relation(fields: [subjectId], references: [id])
 }
 
 model student_subjects {
     id          Int      @id @default(autoincrement())
-    studentId  Int
-    subjectId  Int
+    studentId   Int
+    subjectId   Int
+    grade       Float
     students students @relation(fields: [studentId], references: [id])
     subjects subjects @relation(fields: [subjectId], references: [id])
 }
