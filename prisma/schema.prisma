@@ -14,33 +14,37 @@ datasource db {
 }
 
 model Curricullum {
-    id          Int      @id @default(autoincrement())
-    subjects    Subject[]
-    students    Student[]
+  id       Int                  @id @default(autoincrement())
+  subjects CurricullumSubject[]
 }
 
 model Subject {
-    id           Int      @id @default(autoincrement())
-    name         String
-    curricullums Curricullum[]
-    students     Student[]
-    grades       Grade[]
+  id           Int                  @id @default(autoincrement())
+  name         String
+  grades       Grade[]
+  curricullums CurricullumSubject[]
 }
 
 model Student {
-    id            Int      @id @default(autoincrement())
-    name          String
-    curricullumId Int
-    subjects      Subject[]
-    grades        Grade[]
-    curricullums  Curricullum @relation(fields: [curricullumId], references: [id])
+  id            Int     @id @default(autoincrement())
+  name          String
+  curricullumId Int
+  grades        Grade[]
+}
+
+model CurricullumSubject {
+  id            Int         @id @default(autoincrement())
+  curricullumId Int
+  subjectId     Int
+  curricullums  Curricullum @relation(fields: [curricullumId], references: [id])
+  subjects      Subject     @relation(fields: [subjectId], references: [id])
 }
 
 model Grade {
-    id          Int      @id @default(autoincrement())
-    value       Int
-    subjectId   Int
-    studentId   Int
-    subjects    Subject   @relation(fields: [subjectId], references: [id])
-    students    Student   @relation(fields: [studentId], references: [id])
+  id        Int     @id @default(autoincrement())
+  value     Int
+  subjectId Int
+  studentId Int
+  subjects  Subject @relation(fields: [subjectId], references: [id])
+  students  Student @relation(fields: [studentId], references: [id])
 }
