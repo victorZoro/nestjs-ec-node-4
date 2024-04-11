@@ -13,40 +13,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model curricullums {
+model Curricullum {
     id          Int      @id @default(autoincrement())
-    curriculum_subjects curricullum_subjects[]
-    students students[]
+    subjects    Subject[]
+    students    Student[]
 }
 
-model subjects {
-    id          Int      @id @default(autoincrement())
-    name        String
-    curriculum_subjects curricullum_subjects[]
-    student_subjects student_subjects[]
+model Subject {
+    id           Int      @id @default(autoincrement())
+    name         String
+    curricullums Curricullum[]
+    students     Student[]
+    grades       Grade[]
 }
 
-model students {
+model Student {
     id            Int      @id @default(autoincrement())
     name          String
     curricullumId Int
-    curricullums curricullums @relation(fields: [curricullumId], references: [id])
-    student_subjects student_subjects[]
+    subjects      Subject[]
+    grades        Grade[]
+    curricullums  Curricullum @relation(fields: [curricullumId], references: [id])
 }
 
-model curricullum_subjects {
-    id            Int      @id @default(autoincrement())
-    curricullumId Int
-    subjectId     Int      @unique
-    curricullums curricullums @relation(fields: [curricullumId], references: [id])
-    subjects subjects @relation(fields: [subjectId], references: [id])
-}
-
-model student_subjects {
+model Grade {
     id          Int      @id @default(autoincrement())
-    studentId   Int
+    value       Int
     subjectId   Int
-    grade       Float
-    students students @relation(fields: [studentId], references: [id])
-    subjects subjects @relation(fields: [subjectId], references: [id])
+    studentId   Int
+    subjects    Subject   @relation(fields: [subjectId], references: [id])
+    students    Student   @relation(fields: [studentId], references: [id])
 }
