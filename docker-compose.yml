@@ -4,7 +4,6 @@ services:
     container_name: universitydb
     restart: unless-stopped
     volumes:
-      - ./config/init.sql:/docker-entrypoint-config.d/init.sql
       - mysqldb:/var/lib/mysql
     ports:
       - "3306:3306"
