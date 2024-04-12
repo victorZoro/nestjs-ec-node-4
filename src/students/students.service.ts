@@ -23,6 +23,22 @@ export class StudentsService {
     }
   }
 
+  async findAllByScore(): Promise<any> {
+    try {
+      return await this.prisma.$queryRaw`
+      SELECT 
+        students.*, 
+        (SELECT AVG(value) FROM Grade WHERE studentId = students.id) as avgGrade
+      FROM 
+        Student students
+      ORDER BY 
+        avgGrade DESC
+    `;
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
   async create(createStudentDto: CreateStudentDto) {
     try {
       return await this.prisma.student.create({
@@ -86,6 +102,49 @@ export class StudentsService {
         },
         data: {
           value: value,
+        },
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  async findAllRecords() {
+    try {
+      return await this.prisma.grade.findMany({
+        select: {
+          value: true,
+          subjectId: true,
+          students: {
+            select: {
+              id: true,
+              name: true,
+              curricullumId: true,
+            },
+          },
+        },
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  async findRecordsByStudent(studentId: number) {
+    try {
+      return await this.prisma.grade.findMany({
+        where: {
+          studentId: studentId,
+        },
+        select: {
+          value: true,
+          subjectId: true,
+          students: {
+            select: {
+              id: true,
+              name: true,
+              curricullumId: true,
+            },
+          },
         },
       });
     } catch (err) {

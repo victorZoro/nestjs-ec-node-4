@@ -22,6 +22,29 @@ export class StudentsController {
     res.status(HttpStatus.OK).json(students);
   }
 
+  @Get('by_score')
+  async findAllByScore(@Res() res: Response): Promise<any> {
+    const students = await this.studentService.findAllByScore();
+    res.status(HttpStatus.OK).json(students);
+  }
+
+  @Get('records')
+  async findAllRecords(@Res() res: Response): Promise<any> {
+    const records = await this.studentService.findAllRecords();
+    res.status(HttpStatus.OK).send(records);
+  }
+
+  @Get('records/:id')
+  async findRecordsByStudent(
+    @Param() params: any,
+    @Res() res: Response,
+  ): Promise<any> {
+    const record = await this.studentService.findRecordsByStudent(
+      Number(params.id),
+    );
+    res.status(HttpStatus.OK).send(record);
+  }
+
   @Get(':id')
   async findOne(@Param() params: any, @Res() res: Response): Promise<any> {
     const student = await this.studentService.findOne(Number(params.id));
