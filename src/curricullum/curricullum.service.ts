@@ -23,12 +23,20 @@ export class CurricullumService {
     }
   }
 
-  /*
-   * TODO: Integrate the create method to the CurriculumController
-   * */
-  async create() {
+  async create(subjectIds: number[]): Promise<any> {
     try {
-      return await this.prisma.curricullum.create({});
+      const curricullum = await this.prisma.curricullum.create({});
+
+      await this.prisma.curricullumSubject.createMany({
+        data: subjectIds.map((subjectId) => {
+          return {
+            curricullumId: curricullum.id,
+            subjectId: subjectId,
+          };
+        }),
+      });
+
+      return curricullum;
     } catch (err) {
       throw new Error(err);
     }

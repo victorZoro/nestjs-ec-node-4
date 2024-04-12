@@ -43,10 +43,14 @@ export class CurricullumController {
   }
 
   @Post()
-  async create(@Res() res: Response): Promise<any> {
+  async create(@Body() body: any, @Res() res: Response): Promise<any> {
     try {
-      const curricullum = await this.curricullumService.create();
-      res.status(HttpStatus.OK).send(curricullum);
+      const curricullum = await this.curricullumService.create(body.subjectIds);
+      const subjects =
+        await this.curricullumService.findSubjectsByCurricullumId(
+          curricullum.id,
+        );
+      res.status(HttpStatus.OK).send({ curricullum, subjects });
     } catch (err) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         status: HttpStatus.INTERNAL_SERVER_ERROR,
