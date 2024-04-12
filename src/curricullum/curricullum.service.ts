@@ -7,7 +7,7 @@ export class CurricullumService {
   constructor(private prisma: PrismaService) {}
   async findAll(): Promise<any> {
     try {
-      return await this.prisma.curricullums.findMany();
+      return await this.prisma.curricullum.findMany();
     } catch (err) {
       throw new Error(err);
     }
@@ -15,7 +15,7 @@ export class CurricullumService {
 
   async findOne(id: number): Promise<any> {
     try {
-      return await this.prisma.curricullums.findUnique({
+      return await this.prisma.curricullum.findUnique({
         where: { id: id },
       });
     } catch (err) {
@@ -23,9 +23,12 @@ export class CurricullumService {
     }
   }
 
+  /*
+   * TODO: Integrate the create method to the CurriculumController
+   * */
   async create() {
     try {
-      return await this.prisma.curricullums.create({});
+      return await this.prisma.curricullum.create({});
     } catch (err) {
       throw new Error(err);
     }
@@ -33,10 +36,22 @@ export class CurricullumService {
 
   async addSubject(curricullumDto: CurricullumDto) {
     try {
-      return await this.prisma.curricullum_subjects.create({
+      return await this.prisma.curricullumSubject.create({
         data: {
           curricullumId: curricullumDto.curricullumId,
           subjectId: curricullumDto.subjectId,
+        },
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  async findSubjectsByCurricullumId(curricullumId: number): Promise<any> {
+    try {
+      return await this.prisma.curricullumSubject.findMany({
+        where: {
+          curricullumId: curricullumId,
         },
       });
     } catch (err) {
