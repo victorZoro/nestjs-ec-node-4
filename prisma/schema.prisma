@@ -47,4 +47,6 @@ model Grade {
   studentId Int
   subjects  Subject @relation(fields: [subjectId], references: [id])
   students  Student @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, subjectId])
 }
