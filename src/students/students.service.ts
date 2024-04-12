@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../shared/services/prisma.service';
 import { CreateStudentDto } from './dto/create-student.dto';
-import { Student } from './student.interface';
 
 @Injectable()
 export class StudentsService {
   constructor(private prisma: PrismaService) {}
   async findAll(): Promise<any> {
     try {
-      return await this.prisma.students.findMany();
+      return await this.prisma.student.findMany();
     } catch (err) {
       throw new Error(err);
     }
@@ -16,7 +15,7 @@ export class StudentsService {
 
   async findOne(id: number): Promise<any> {
     try {
-      return await this.prisma.students.findUnique({
+      return await this.prisma.student.findUnique({
         where: { id: id },
       });
     } catch (err) {
@@ -26,49 +25,73 @@ export class StudentsService {
 
   async create(createStudentDto: CreateStudentDto) {
     try {
-      const student = await this.prisma.students.create({
+      return await this.prisma.student.create({
         data: {
           name: createStudentDto.name,
           curricullumId: createStudentDto.curricullumId,
         },
       });
-
-      await this.createStudentSubject(createStudentDto, student);
-
-      return student;
     } catch (err) {
       throw new Error(err);
     }
   }
 
-  async findAllSubjects(studentId: number): Promise<any> {
+  async findAllGrades(studentId: number): Promise<any> {
     try {
-      return await this.prisma.student_subjects.findMany({
-        where: { studentId: studentId },
+      return await this.prisma.grade.findMany({
+        where: {
+          studentId: studentId,
+        },
       });
     } catch (err) {
       throw new Error(err);
     }
   }
 
-  async createStudentSubject(
-    createStudentDto: CreateStudentDto,
-    student: Student,
-  ) {
+  async findGradeBySubjectId(
+    studentId: number,
+    subjectId: number,
+  ): Promise<any> {
     try {
-      const curricullumSubjects =
-        await this.prisma.curricullum_subjects.findMany({
-          where: { curricullumId: createStudentDto.curricullumId },
-        });
+      return await this.prisma.grade.findMany({
+        where: {
+          studentId: studentId,
+          subjectId: subjectId,
+        },
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
 
-      for (const curricullumSubject of curricullumSubjects) {
-        await this.prisma.student_subjects.create({
-          data: {
-            studentId: student.id,
-            subjectId: curricullumSubject.subjectId,
-          },
-        });
-      }
+  async addGrade(studentId: number, subjectId: number, value: number) {
+    try {
+      return await this.prisma.grade.create({
+        data: {
+          studentId: studentId,
+          subjectId: subjectId,
+          value: value,
+        },
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  /*
+   * TODO: Add method overloading
+   *  When the method is called with 3 arguments, use another method signature.
+   * */
+  async updateGrade(gradeId: number, value: number) {
+    try {
+      return await this.prisma.grade.update({
+        where: {
+          id: gradeId,
+        },
+        data: {
+          value: value,
+        },
+      });
     } catch (err) {
       throw new Error(err);
     }
