@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 import { subjects } from './seeding/subjects.seed';
-import { students } from './seeding/students.seed';
 import { getCurricullumSubjects } from './seeding/helper/generateCurricullumSubjects.helper';
 import {
   findAllCurricullums,
@@ -9,6 +8,8 @@ import {
 } from './seeding/helper/findAll.helper';
 import * as process from 'process';
 import { seedGrades } from './seeding/grades.seed';
+import { deleteAllData } from './seeding/helper/deleteAll';
+import { generateStudents } from './seeding/helper/generateStudents.helper';
 
 export const prisma = new PrismaClient();
 
@@ -51,8 +52,10 @@ async function seedCurricullums() {
   }
 }
 
-async function seedStudents() {
+async function seedStudents(curricullums: any[], numberOfStudents: number) {
   console.log('[seed.ts] seedStudents() started...');
+
+  const students = generateStudents(curricullums, numberOfStudents);
 
   try {
     await Promise.all(
@@ -89,23 +92,20 @@ async function seedCurricullumSubjects(allCurricullums: any) {
   }
 }
 
-async function findAll() {
-  const allCurricullums = await findAllCurricullums();
-  const allStudents = await findAllStudents();
-  const allSubjects = await findAllSubjects();
-
-  return { allCurricullums, allStudents, allSubjects };
-}
-
 async function main() {
   console.log('[seed.ts] seedDatabase() started...');
 
   try {
-    await seedCurricullums();
-    await seedSubjects();
-    await seedStudents();
+    await deleteAllData();
 
-    const { allCurricullums, allStudents, allSubjects } = await findAll();
+    await seedCurricullums();
+    const allCurricullums = await findAllCurricullums();
+
+    await seedSubjects();
+    const allSubjects = await findAllSubjects();
+
+    await seedStudents(allCurricullums, 10);
+    const allStudents = await findAllStudents();
 
     await seedCurricullumSubjects(allCurricullums);
 
