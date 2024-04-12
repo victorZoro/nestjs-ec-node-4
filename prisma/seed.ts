@@ -109,7 +109,7 @@ async function main() {
 
     await seedCurricullumSubjects(allCurricullums);
 
-    await seedGrades(allStudents, allSubjects);
+    await seedGrades(allStudents, allSubjects, 3);
 
     console.log('[seed.ts] seedDatabase() ended...');
   } catch (err) {

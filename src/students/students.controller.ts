@@ -67,20 +67,10 @@ export class StudentsController {
 
   @Post('grades/update')
   async updateGrade(@Body() gradeDto: GradeDto, @Res() res: Response) {
-    let grade: any;
-
-    if (!gradeDto.gradeId) {
-      grade = await this.studentService.updateGradeByStudentAndSubject(
-        Number(gradeDto.studentId),
-        Number(gradeDto.subjectId),
-        Number(gradeDto.value),
-      );
-    } else {
-      grade = await this.studentService.updateGradeByGrade(
-        Number(gradeDto.gradeId),
-        Number(gradeDto.value),
-      );
-    }
+    const grade = await this.studentService.updateGradeByGrade(
+      Number(gradeDto.gradeId),
+      Number(gradeDto.value),
+    );
 
     res.status(HttpStatus.OK).send(grade);
   }

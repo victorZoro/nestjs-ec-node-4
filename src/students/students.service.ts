@@ -92,26 +92,4 @@ export class StudentsService {
       throw new Error(err);
     }
   }
-
-  async updateGradeByStudentAndSubject(
-    studentId: number,
-    subjectId: number,
-    value: number,
-  ) {
-    try {
-      return await this.prisma.grade.update({
-        where: {
-          studentId_subjectId: {
-            studentId: studentId,
-            subjectId: subjectId,
-          },
-        },
-        data: {
-          value: value,
-        },
-      });
-    } catch (err) {
-      throw new Error(err);
-    }
-  }
 }

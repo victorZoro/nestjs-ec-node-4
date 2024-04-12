@@ -9,6 +9,7 @@ const values = [
 export async function seedGrades(
   allStudents: Student[],
   allSubjects: Subject[],
+  numGradesPerSubject: number,
 ) {
   console.log('[seed.ts] seedGrades started...');
 
@@ -17,22 +18,42 @@ export async function seedGrades(
       where: { curricullumId: student.curricullumId },
     });
 
-    const gradePromises = curriculumSubjects.map(async (curriculumSubject) => {
+    console.log(
+      `[seed.ts] curriculumSubjects for student ${student.id}:`,
+      curriculumSubjects,
+    );
+
+    const gradePromises = curriculumSubjects.flatMap((curriculumSubject) => {
       const subject = allSubjects.find(
         (subject) => subject.id === curriculumSubject.subjectId,
       );
 
+      console.log(
+        `[seed.ts] subject for curriculumSubject ${curriculumSubject.id}:`,
+        subject,
+      );
+
       if (!subject) return [];
 
-      const numGrades = Math.floor(Math.random() * values.length);
+      const grades = [];
 
-      const grades = Array.from({ length: numGrades }, (_, i) => ({
-        value: values[i % values.length],
-        subjectId: subject.id,
-        studentId: student.id,
-      }));
+      for (let i = 0; i < numGradesPerSubject; i++) {
+        const gradeValue = values[Math.floor(Math.random() * values.length)];
 
-      return prisma.grade.createMany({ data: grades });
+        const grade = {
+          value: gradeValue,
+          subjectId: subject.id,
+          studentId: student.id,
+        };
+
+        grades.push(
+          prisma.grade.create({
+            data: grade,
+          }),
+        );
+      }
+
+      return grades;
     });
 
     return Promise.all(gradePromises);
