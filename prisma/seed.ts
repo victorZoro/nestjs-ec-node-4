@@ -1,208 +1,117 @@
-//TODO: REMOVE LATER
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { PrismaClient } from '@prisma/client';
+import { subjects } from './seeding/subjects.seed';
+import { students } from './seeding/students.seed';
+import { getCurricullumSubjects } from './seeding/helper/generateCurricullumSubjects.helper';
+import {
+  findAllCurricullums,
+  findAllStudents,
+  findAllSubjects,
+} from './seeding/helper/findAll.helper';
+import * as process from 'process';
+import { seedGrades } from './seeding/grades.seed';
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 
-const curricullums = Array(4).fill(undefined);
-
-const students = [
-  {
-    name: 'Alice Thompson',
-    curricullumId: 1,
-  },
-  {
-    name: 'Bob Williams',
-    curricullumId: 2,
-  },
-  {
-    name: 'Charlie Johnson',
-    curricullumId: 3,
-  },
-  {
-    name: 'Diana Miller',
-    curricullumId: 4,
-  },
-  {
-    name: 'Ethan Davis',
-    curricullumId: 1,
-  },
-  {
-    name: 'Fiona Wilson',
-    curricullumId: 3,
-  },
-  {
-    name: 'George Anderson',
-    curricullumId: 1,
-  },
-  {
-    name: 'Hannah Taylor',
-    curricullumId: 2,
-  },
-  {
-    name: 'Ivan Thomas',
-    curricullumId: 4,
-  },
-  {
-    name: 'Julia Jackson',
-    curricullumId: 4,
-  },
-];
-
-const subjects = [
-  {
-    name: 'Math',
-  },
-  {
-    name: 'Science',
-  },
-  {
-    name: 'History',
-  },
-  {
-    name: 'English',
-  },
-  {
-    name: 'Geography',
-  },
-  {
-    name: 'Art',
-  },
-  {
-    name: 'Music',
-  },
-  {
-    name: 'Physical Education',
-  },
-  {
-    name: 'Computer Science',
-  },
-  {
-    name: 'Health',
-  },
-];
-
-const grades = [
-  ...Array.from({ length: 15 }, () => Math.floor(Math.random() * 40) + 61),
-  ...Array.from({ length: 15 }, () => Math.floor(Math.random() * 100) + 1),
-];
-
-async function getRandomSubjects(min: number) {
-  console.log('[seed.ts] getRandomSubjects started...');
-
-  const subjects = await prisma.subjects.findMany();
-  const shuffled = subjects.sort(() => 0.5 - Math.random());
-  const result = [];
-
-  while (result.length < min) {
-    const randomIndex = Math.floor(Math.random() * subjects.length);
-    result.push(subjects[randomIndex]);
-    subjects.splice(randomIndex, 1);
-  }
-
-  console.log('[seed.ts] getRandomSubjects shutting down...', result);
-
-  return result;
-}
-
-async function getCurricullumSubjects(curricullums) {
-  console.log('[seed.ts] getCurricullumSubjects started...');
-
-  const curricullumSubjectsPromises = curricullums.flatMap(
-    async (curricullum) => {
-      const subjectsForCurricullum = await getRandomSubjects(5);
-      return subjectsForCurricullum.map((subject) => ({
-        curricullumId: curricullum.id,
-        subjectId: subject.id,
-      }));
-    },
-  );
-
-  const curricullumSubjects = (
-    await Promise.all(curricullumSubjectsPromises)
-  ).flat();
-
-  console.log(
-    '[seed.ts] getCurricullumSubjects shutting down...',
-    curricullumSubjects,
-  );
-
-  return curricullumSubjects;
-}
-
-async function findAllStudents() {
-  return await prisma.students.findMany();
-}
-
-async function findAllCurricullums() {
-  return await prisma.curricullums.findMany();
-}
-
-async function seedDatabase() {
-  console.log('[seed.ts] seedDatabase() started...');
+async function seedSubjects() {
+  console.log('[seed.ts] seedSubjects() started...');
 
   try {
-    // Create subjects
     await Promise.all(
       subjects.map(async (subject) => {
-        await prisma.subjects.create({
+        await prisma.subject.create({
           data: subject,
         });
       }),
     );
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  } finally {
+    console.log('[seed.ts] seedSubjects() shutting down...');
+  }
+}
+async function seedCurricullums() {
+  console.log('[seed.ts] seedCurriculums() started...');
 
-    //Create curriculums
+  const curricullums = Array(4).fill(undefined);
+
+  try {
     await Promise.all(
       curricullums.map(async () => {
-        await prisma.curricullums.create({
+        await prisma.curricullum.create({
           data: {},
         });
       }),
     );
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  } finally {
+    console.log('[seed.ts] seedCurriculums() shutting down...');
+  }
+}
 
-    //Create students
+async function seedStudents() {
+  console.log('[seed.ts] seedStudents() started...');
+
+  try {
     await Promise.all(
       students.map(async (student) => {
-        await prisma.students.create({
+        await prisma.student.create({
           data: student,
         });
       }),
     );
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  } finally {
+    console.log('[seed.ts] seedStudents() shutting down...');
+  }
+}
 
-    const createdCurricullums = await findAllCurricullums();
-    const curricullumSubjects =
-      await getCurricullumSubjects(createdCurricullums);
+async function seedCurricullumSubjects(allCurricullums: any) {
+  try {
+    const curricullumSubjects = await getCurricullumSubjects(allCurricullums);
 
-    //Create curricullum subjects
     await Promise.all(
       curricullumSubjects.map(async (curricullumSubject) => {
-        await prisma.curricullum_subjects.create({
+        await prisma.curricullumSubject.create({
           data: curricullumSubject,
         });
       }),
     );
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  } finally {
+    console.log('[seed.ts] seedCurricullumSubjects() shutting down...');
+  }
+}
 
-    const createdStudents = await findAllStudents();
+async function findAll() {
+  const allCurricullums = await findAllCurricullums();
+  const allStudents = await findAllStudents();
+  const allSubjects = await findAllSubjects();
 
-    await Promise.all(
-      createdStudents.map(async (student) => {
-        const subjectsForStudent = curricullumSubjects.filter(
-          (cs) => cs.curricullumId === student.curricullumId,
-        );
+  return { allCurricullums, allStudents, allSubjects };
+}
 
-        await Promise.all(
-          subjectsForStudent.map(async (curricullumSubject) => {
-            await prisma.student_subjects.create({
-              data: {
-                studentId: student.id,
-                subjectId: curricullumSubject.subjectId,
-                grade: grades[Math.floor(Math.random() * grades.length)],
-              },
-            });
-          }),
-        );
-      }),
-    );
+async function main() {
+  console.log('[seed.ts] seedDatabase() started...');
+
+  try {
+    await seedCurricullums();
+    await seedSubjects();
+    await seedStudents();
+
+    const { allCurricullums, allStudents, allSubjects } = await findAll();
+
+    await seedCurricullumSubjects(allCurricullums);
+
+    await seedGrades(allStudents, allSubjects);
+
+    console.log('[seed.ts] seedDatabase() ended...');
   } catch (err) {
     console.error(err);
     process.exit(1);
@@ -211,4 +120,4 @@ async function seedDatabase() {
   }
 }
 
-seedDatabase();
+main();
