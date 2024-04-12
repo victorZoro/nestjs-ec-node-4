@@ -55,4 +55,22 @@ export class SubjectsController {
       });
     }
   }
+
+  @Get(':id/curricullums')
+  async findCurricullumBySubjectId(
+    @Param() params: any,
+    @Res() res: Response,
+  ): Promise<any> {
+    try {
+      const subject = await this.subjectService.findCurricullumBySubjectId(
+        Number(params.id),
+      );
+      res.status(HttpStatus.OK).json(subject);
+    } catch (err) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: err.message,
+      });
+    }
+  }
 }
