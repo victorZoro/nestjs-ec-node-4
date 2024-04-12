@@ -10,6 +10,7 @@ import {
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { Response } from 'express';
+import { GradeDto } from './dto/grade.dto';
 
 @Controller('students')
 export class StudentsController {
@@ -55,21 +56,32 @@ export class StudentsController {
   }
 
   @Post('grades/add')
-  async addGrade(@Body() body: any, @Res() res: Response) {
+  async addGrade(@Body() gradeDto: GradeDto, @Res() res: Response) {
     const grade = await this.studentService.addGrade(
-      Number(body.studentId),
-      Number(body.subjectId),
-      Number(body.value),
+      Number(gradeDto.studentId),
+      Number(gradeDto.subjectId),
+      Number(gradeDto.value),
     );
     res.status(HttpStatus.OK).send(grade);
   }
 
   @Post('grades/update')
-  async updateGrade(@Body() body: any, @Res() res: Response) {
-    const grade = await this.studentService.updateGrade(
-      Number(body.gradeId),
-      Number(body.value),
-    );
+  async updateGrade(@Body() gradeDto: GradeDto, @Res() res: Response) {
+    let grade: any;
+
+    if (!gradeDto.gradeId) {
+      grade = await this.studentService.updateGradeByStudentAndSubject(
+        Number(gradeDto.studentId),
+        Number(gradeDto.subjectId),
+        Number(gradeDto.value),
+      );
+    } else {
+      grade = await this.studentService.updateGradeByGrade(
+        Number(gradeDto.gradeId),
+        Number(gradeDto.value),
+      );
+    }
+
     res.status(HttpStatus.OK).send(grade);
   }
 }

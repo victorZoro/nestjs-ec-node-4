@@ -78,15 +78,33 @@ export class StudentsService {
     }
   }
 
-  /*
-   * TODO: Add method overloading
-   *  When the method is called with 3 arguments, use another method signature.
-   * */
-  async updateGrade(gradeId: number, value: number) {
+  async updateGradeByGrade(gradeId: number, value: number) {
     try {
       return await this.prisma.grade.update({
         where: {
           id: gradeId,
+        },
+        data: {
+          value: value,
+        },
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  async updateGradeByStudentAndSubject(
+    studentId: number,
+    subjectId: number,
+    value: number,
+  ) {
+    try {
+      return await this.prisma.grade.update({
+        where: {
+          studentId_subjectId: {
+            studentId: studentId,
+            subjectId: subjectId,
+          },
         },
         data: {
           value: value,
