@@ -41,10 +41,11 @@ model CurricullumSubject {
 }
 
 model Grade {
-  id        Int     @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   value     Int
+  updatedAt DateTime? @default(now())
   subjectId Int
   studentId Int
-  subjects  Subject @relation(fields: [subjectId], references: [id])
-  students  Student @relation(fields: [studentId], references: [id])
+  subjects  Subject   @relation(fields: [subjectId], references: [id])
+  students  Student   @relation(fields: [studentId], references: [id])
 }
