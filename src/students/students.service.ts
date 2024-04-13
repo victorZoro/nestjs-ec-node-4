@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../shared/services/prisma.service';
 import { CreateStudentDto } from './dto/create-student.dto';
+import { isSubjectCompleted } from '../subjects/helper/isSubjectCompleted.helper';
 
 @Injectable()
 export class StudentsService {
@@ -80,8 +81,11 @@ export class StudentsService {
     }
   }
 
+  //TODO: Change all {studentId, subjectId, value?} to GradeDto
   async addGrade(studentId: number, subjectId: number, value: number) {
     try {
+      await this.isSubjectCompleted(studentId, subjectId);
+
       return await this.prisma.grade.create({
         data: {
           studentId: studentId,
@@ -91,6 +95,15 @@ export class StudentsService {
       });
     } catch (err) {
       throw new Error(err);
+    }
+  }
+
+  //TODO: Move function to helper package
+  async isSubjectCompleted(studentId: number, subjectId: number) {
+    if (await isSubjectCompleted(studentId, subjectId)) {
+      throw new Error(
+        'This subject has been completed and cannot accept new grades.',
+      );
     }
   }
 
