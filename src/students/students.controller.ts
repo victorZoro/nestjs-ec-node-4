@@ -17,19 +17,19 @@ export class StudentsController {
   constructor(private readonly studentService: StudentsService) {}
 
   @Get()
-  async findAll(@Res() res: Response): Promise<any> {
+  async findAll(@Res() res: Response): Promise<void> {
     const students = await this.studentService.findAll();
     res.status(HttpStatus.OK).json(students);
   }
 
   @Get('by_score')
-  async findAllByScore(@Res() res: Response): Promise<any> {
+  async findAllByScore(@Res() res: Response): Promise<void> {
     const students = await this.studentService.findAllByScore();
     res.status(HttpStatus.OK).json(students);
   }
 
   @Get('records')
-  async findAllRecords(@Res() res: Response): Promise<any> {
+  async findAllRecords(@Res() res: Response): Promise<void> {
     const records = await this.studentService.findAllRecords();
     res.status(HttpStatus.OK).send(records);
   }
@@ -38,7 +38,7 @@ export class StudentsController {
   async findRecordsByStudent(
     @Param() params: { id: number },
     @Res() res: Response,
-  ): Promise<any> {
+  ): Promise<void> {
     const record = await this.studentService.findRecordsByStudent(
       Number(params.id),
     );
@@ -49,7 +49,7 @@ export class StudentsController {
   async findOne(
     @Param() params: { id: number },
     @Res() res: Response,
-  ): Promise<any> {
+  ): Promise<void> {
     const student = await this.studentService.findOne(Number(params.id));
     res.status(HttpStatus.OK).send(student);
   }
@@ -58,7 +58,7 @@ export class StudentsController {
   async create(
     @Body() createStudentDto: CreateStudentDto,
     @Res() res: Response,
-  ): Promise<any> {
+  ): Promise<void> {
     const student = await this.studentService.create(createStudentDto);
     res.status(HttpStatus.OK).send(student);
   }
@@ -67,25 +67,34 @@ export class StudentsController {
   async findAllGrades(
     @Param() params: { id: number },
     @Res() res: Response,
-  ): Promise<any> {
+  ): Promise<void> {
     const grades = await this.studentService.findAllGrades(Number(params.id));
     res.status(HttpStatus.OK).send(grades);
   }
 
   @Get(':id/grades/:subjectId')
-  async findGradeBySubjectId(@Param() params: GradeDto, @Res() res: Response) {
+  async findGradeBySubjectId(
+    @Param() params: GradeDto,
+    @Res() res: Response,
+  ): Promise<void> {
     const grade = await this.studentService.findGradeBySubjectId(params);
     res.status(HttpStatus.OK).send(grade);
   }
 
   @Post('grades/add')
-  async addGrade(@Body() gradeDto: GradeDto, @Res() res: Response) {
+  async addGrade(
+    @Body() gradeDto: GradeDto,
+    @Res() res: Response,
+  ): Promise<void> {
     const grade = await this.studentService.addGrade(gradeDto);
     res.status(HttpStatus.OK).send(grade);
   }
 
   @Post('grades/update')
-  async updateGrade(@Body() gradeDto: GradeDto, @Res() res: Response) {
+  async updateGrade(
+    @Body() gradeDto: GradeDto,
+    @Res() res: Response,
+  ): Promise<void> {
     const grade = await this.studentService.updateGradeByGrade(gradeDto);
 
     res.status(HttpStatus.OK).send(grade);

@@ -15,7 +15,7 @@ import { CurricullumDto } from './dto/curricullum.dto';
 export class CurricullumController {
   constructor(private readonly curricullumService: CurricullumService) {}
   @Get()
-  async findAll(@Res() res: Response): Promise<any> {
+  async findAll(@Res() res: Response): Promise<void> {
     try {
       const curricullums = await this.curricullumService.findAll();
       res.status(HttpStatus.OK).json(curricullums);
@@ -31,7 +31,7 @@ export class CurricullumController {
   async findOne(
     @Param() params: { id: number },
     @Res() res: Response,
-  ): Promise<any> {
+  ): Promise<void> {
     try {
       const curricullum = await this.curricullumService.findOne(
         Number(params.id),
@@ -49,7 +49,7 @@ export class CurricullumController {
   async create(
     @Body() body: { subjectIds: number[] },
     @Res() res: Response,
-  ): Promise<any> {
+  ): Promise<void> {
     try {
       const curricullum = await this.curricullumService.create(body.subjectIds);
       const subjects =
@@ -69,7 +69,7 @@ export class CurricullumController {
   async addSubject(
     @Body() curricullumDto: CurricullumDto,
     @Res() res: Response,
-  ): Promise<any> {
+  ): Promise<void> {
     try {
       const curricullum =
         await this.curricullumService.addSubject(curricullumDto);
@@ -86,7 +86,7 @@ export class CurricullumController {
   async findSubjectsByCurricullumId(
     @Param() params: { id: number },
     @Res() res: Response,
-  ): Promise<any> {
+  ): Promise<void> {
     try {
       const subjects =
         await this.curricullumService.findSubjectsByCurricullumId(

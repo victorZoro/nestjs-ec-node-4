@@ -15,7 +15,7 @@ import { Response } from 'express';
 export class SubjectsController {
   constructor(private readonly subjectService: SubjectsService) {}
   @Get()
-  async findAll(@Res() res: Response): Promise<any> {
+  async findAll(@Res() res: Response): Promise<void> {
     try {
       const subjects = await this.subjectService.findAll();
       res.status(HttpStatus.OK).json(subjects);
@@ -31,7 +31,7 @@ export class SubjectsController {
   async findOne(
     @Param() params: { id: number },
     @Res() res: Response,
-  ): Promise<any> {
+  ): Promise<void> {
     try {
       const subject = await this.subjectService.findOne(Number(params.id));
       res.status(HttpStatus.OK).json(subject);
@@ -47,7 +47,7 @@ export class SubjectsController {
   async create(
     @Body() createSubjectDto: CreateSubjectDto,
     @Res() res: Response,
-  ): Promise<any> {
+  ): Promise<void> {
     try {
       const subject = await this.subjectService.create(createSubjectDto);
       res.status(HttpStatus.OK).json(subject);
@@ -63,7 +63,7 @@ export class SubjectsController {
   async findCurricullumBySubjectId(
     @Param() params: { id: number },
     @Res() res: Response,
-  ): Promise<any> {
+  ): Promise<void> {
     try {
       const subject = await this.subjectService.findCurricullumBySubjectId(
         Number(params.id),
