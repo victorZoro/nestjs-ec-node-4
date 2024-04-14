@@ -22,7 +22,7 @@ export class StudentsController {
     res.status(HttpStatus.OK).json(students);
   }
 
-  @Get('by_score')
+  @Get('best')
   async findAllByScore(@Res() res: Response): Promise<void> {
     const students = await this.studentService.findAllByScore();
     res.status(HttpStatus.OK).json(students);
@@ -72,7 +72,7 @@ export class StudentsController {
     res.status(HttpStatus.OK).send(grades);
   }
 
-  @Get(':id/grades/:subjectId')
+  @Get(':studentId/grades/:subjectId')
   async findGradeBySubjectId(
     @Param() params: GradeDto,
     @Res() res: Response,
@@ -95,7 +95,7 @@ export class StudentsController {
     @Body() gradeDto: GradeDto,
     @Res() res: Response,
   ): Promise<void> {
-    const grade = await this.studentService.updateGradeByGrade(gradeDto);
+    const grade = await this.studentService.updateGrade(gradeDto);
 
     res.status(HttpStatus.OK).send(grade);
   }
