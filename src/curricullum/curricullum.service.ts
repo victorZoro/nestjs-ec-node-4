@@ -25,6 +25,8 @@ export class CurricullumService {
 
   async create(subjectIds: number[]): Promise<any> {
     try {
+      this.validateSubjectCount(subjectIds, 5);
+
       const curricullum = await this.prisma.curricullum.create({});
 
       await this.prisma.curricullumSubject.createMany({
@@ -39,6 +41,12 @@ export class CurricullumService {
       return curricullum;
     } catch (err) {
       throw new Error(err);
+    }
+  }
+
+  validateSubjectCount(subjectIds: number[], minimum: number): void {
+    if (subjectIds.length < minimum) {
+      throw new Error('Minimum subject count is not met');
     }
   }
 
