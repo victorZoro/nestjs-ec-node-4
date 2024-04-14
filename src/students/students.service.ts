@@ -60,6 +60,12 @@ export class StudentsService {
         where: {
           studentId: studentId,
         },
+        select: {
+          id: true,
+          studentId: true,
+          subjectId: true,
+          value: true,
+        },
       });
     } catch (err) {
       throw new Error(err);
@@ -70,8 +76,14 @@ export class StudentsService {
     try {
       return await this.prisma.grade.findMany({
         where: {
-          studentId: gradeDto.studentId,
-          subjectId: gradeDto.subjectId,
+          studentId: Number(gradeDto.studentId),
+          subjectId: Number(gradeDto.subjectId),
+        },
+        select: {
+          id: true,
+          studentId: true,
+          subjectId: true,
+          value: true,
         },
       });
     } catch (err) {
@@ -104,7 +116,7 @@ export class StudentsService {
     }
   }
 
-  async updateGradeByGrade(gradeDto: GradeDto) {
+  async updateGrade(gradeDto: GradeDto) {
     try {
       return await this.prisma.grade.update({
         where: {
