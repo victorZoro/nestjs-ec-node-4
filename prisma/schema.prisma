@@ -38,6 +38,8 @@ model CurricullumSubject {
   subjectId     Int
   curricullums  Curricullum @relation(fields: [curricullumId], references: [id])
   subjects      Subject     @relation(fields: [subjectId], references: [id])
+
+  @@unique([subjectId, curricullumId])
 }
 
 model Grade {
