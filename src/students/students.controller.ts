@@ -10,7 +10,7 @@ import {
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { Response } from 'express';
-import { GradeDto } from './dto/grade.dto';
+import { GradeDto } from '../shared/dto/grade.dto';
 
 @Controller('students')
 export class StudentsController {
@@ -36,7 +36,7 @@ export class StudentsController {
 
   @Get('records/:id')
   async findRecordsByStudent(
-    @Param() params: any,
+    @Param() params: { id: number },
     @Res() res: Response,
   ): Promise<any> {
     const record = await this.studentService.findRecordsByStudent(
@@ -46,7 +46,10 @@ export class StudentsController {
   }
 
   @Get(':id')
-  async findOne(@Param() params: any, @Res() res: Response): Promise<any> {
+  async findOne(
+    @Param() params: { id: number },
+    @Res() res: Response,
+  ): Promise<any> {
     const student = await this.studentService.findOne(Number(params.id));
     res.status(HttpStatus.OK).send(student);
   }
@@ -62,7 +65,7 @@ export class StudentsController {
 
   @Get(':id/grades')
   async findAllGrades(
-    @Param() params: any,
+    @Param() params: { id: number },
     @Res() res: Response,
   ): Promise<any> {
     const grades = await this.studentService.findAllGrades(Number(params.id));
@@ -70,30 +73,20 @@ export class StudentsController {
   }
 
   @Get(':id/grades/:subjectId')
-  async findGradeBySubjectId(@Param() params: any, @Res() res: Response) {
-    const grade = await this.studentService.findGradeBySubjectId(
-      Number(params.id),
-      Number(params.subjectId),
-    );
+  async findGradeBySubjectId(@Param() params: GradeDto, @Res() res: Response) {
+    const grade = await this.studentService.findGradeBySubjectId(params);
     res.status(HttpStatus.OK).send(grade);
   }
 
   @Post('grades/add')
   async addGrade(@Body() gradeDto: GradeDto, @Res() res: Response) {
-    const grade = await this.studentService.addGrade(
-      Number(gradeDto.studentId),
-      Number(gradeDto.subjectId),
-      Number(gradeDto.value),
-    );
+    const grade = await this.studentService.addGrade(gradeDto);
     res.status(HttpStatus.OK).send(grade);
   }
 
   @Post('grades/update')
   async updateGrade(@Body() gradeDto: GradeDto, @Res() res: Response) {
-    const grade = await this.studentService.updateGradeByGrade(
-      Number(gradeDto.gradeId),
-      Number(gradeDto.value),
-    );
+    const grade = await this.studentService.updateGradeByGrade(gradeDto);
 
     res.status(HttpStatus.OK).send(grade);
   }

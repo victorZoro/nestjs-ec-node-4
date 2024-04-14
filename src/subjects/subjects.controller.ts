@@ -28,7 +28,10 @@ export class SubjectsController {
   }
 
   @Get(':id')
-  async findOne(@Param() params: any, @Res() res: Response): Promise<any> {
+  async findOne(
+    @Param() params: { id: number },
+    @Res() res: Response,
+  ): Promise<any> {
     try {
       const subject = await this.subjectService.findOne(Number(params.id));
       res.status(HttpStatus.OK).json(subject);
@@ -58,7 +61,7 @@ export class SubjectsController {
 
   @Get(':id/curricullums')
   async findCurricullumBySubjectId(
-    @Param() params: any,
+    @Param() params: { id: number },
     @Res() res: Response,
   ): Promise<any> {
     try {

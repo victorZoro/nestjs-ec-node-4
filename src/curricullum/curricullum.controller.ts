@@ -28,7 +28,10 @@ export class CurricullumController {
   }
 
   @Get(':id')
-  async findOne(@Param() params: any, @Res() res: Response): Promise<any> {
+  async findOne(
+    @Param() params: { id: number },
+    @Res() res: Response,
+  ): Promise<any> {
     try {
       const curricullum = await this.curricullumService.findOne(
         Number(params.id),
@@ -43,7 +46,10 @@ export class CurricullumController {
   }
 
   @Post()
-  async create(@Body() body: any, @Res() res: Response): Promise<any> {
+  async create(
+    @Body() body: { subjectIds: number[] },
+    @Res() res: Response,
+  ): Promise<any> {
     try {
       const curricullum = await this.curricullumService.create(body.subjectIds);
       const subjects =
@@ -78,7 +84,7 @@ export class CurricullumController {
 
   @Get(':id/subjects')
   async findSubjectsByCurricullumId(
-    @Param() params: any,
+    @Param() params: { id: number },
     @Res() res: Response,
   ): Promise<any> {
     try {

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../shared/services/prisma.service';
 import { CreateStudentDto } from './dto/create-student.dto';
-import { isSubjectCompleted } from '../subjects/helper/isSubjectCompleted.helper';
+import { isSubjectCompleted } from '../shared/helper/isSubjectCompleted.helper';
+import { GradeDto } from '../shared/dto/grade.dto';
 
 @Injectable()
 export class StudentsService {
@@ -65,15 +66,12 @@ export class StudentsService {
     }
   }
 
-  async findGradeBySubjectId(
-    studentId: number,
-    subjectId: number,
-  ): Promise<any> {
+  async findGradeBySubjectId(gradeDto: GradeDto): Promise<any> {
     try {
       return await this.prisma.grade.findMany({
         where: {
-          studentId: studentId,
-          subjectId: subjectId,
+          studentId: gradeDto.studentId,
+          subjectId: gradeDto.subjectId,
         },
       });
     } catch (err) {
@@ -81,16 +79,15 @@ export class StudentsService {
     }
   }
 
-  //TODO: Change all {studentId, subjectId, value?} to GradeDto
-  async addGrade(studentId: number, subjectId: number, value: number) {
+  async addGrade(gradeDto: GradeDto) {
     try {
-      await this.isSubjectCompleted(studentId, subjectId);
+      await this.isSubjectCompleted(gradeDto);
 
       return await this.prisma.grade.create({
         data: {
-          studentId: studentId,
-          subjectId: subjectId,
-          value: value,
+          studentId: gradeDto.studentId,
+          subjectId: gradeDto.subjectId,
+          value: gradeDto.value,
         },
       });
     } catch (err) {
@@ -99,22 +96,22 @@ export class StudentsService {
   }
 
   //TODO: Move function to helper package
-  async isSubjectCompleted(studentId: number, subjectId: number) {
-    if (await isSubjectCompleted(studentId, subjectId)) {
+  async isSubjectCompleted(gradeDto: GradeDto) {
+    if (!(await isSubjectCompleted(gradeDto))) {
       throw new Error(
         'This subject has been completed and cannot accept new grades.',
       );
     }
   }
 
-  async updateGradeByGrade(gradeId: number, value: number) {
+  async updateGradeByGrade(gradeDto: GradeDto) {
     try {
       return await this.prisma.grade.update({
         where: {
-          id: gradeId,
+          id: gradeDto.gradeId,
         },
         data: {
-          value: value,
+          value: gradeDto.value,
         },
       });
     } catch (err) {
