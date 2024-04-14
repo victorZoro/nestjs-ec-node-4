@@ -81,7 +81,7 @@ export class StudentsService {
 
   async addGrade(gradeDto: GradeDto) {
     try {
-      await this.isSubjectCompleted(gradeDto);
+      await this.isSubjectCompleted(this.prisma, gradeDto);
 
       return await this.prisma.grade.create({
         data: {
@@ -96,8 +96,8 @@ export class StudentsService {
   }
 
   //TODO: Move function to helper package
-  async isSubjectCompleted(gradeDto: GradeDto) {
-    if (!(await isSubjectCompleted(gradeDto))) {
+  async isSubjectCompleted(prisma: PrismaService, gradeDto: GradeDto) {
+    if (await isSubjectCompleted(prisma, gradeDto)) {
       throw new Error(
         'This subject has been completed and cannot accept new grades.',
       );

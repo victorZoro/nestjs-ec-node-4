@@ -1,7 +1,11 @@
 import { GradeDto } from '../dto/grade.dto';
+import { PrismaService } from '../services/prisma.service';
 
-export async function isSubjectCompleted(gradeDto: GradeDto) {
-  const grades: any[] = await this.prisma.grade.findMany({
+export async function isSubjectCompleted(
+  prisma: PrismaService,
+  gradeDto: GradeDto,
+) {
+  const grades: any[] = await prisma.grade.findMany({
     where: {
       studentId: gradeDto.studentId,
       subjectId: gradeDto.subjectId,
