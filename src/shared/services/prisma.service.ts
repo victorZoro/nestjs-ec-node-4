@@ -29,20 +29,13 @@ export class PrismaService
   }
 
   async cleanDatabase() {
-    console.log('[seed.ts] cleanDatabase() started...');
+    if (process.env.NODE_ENV === 'production') return;
+    const modelKeys = Reflect.ownKeys(this).filter(
+      (key) => typeof this[key].deleteMany === 'function',
+    );
 
-    const models = ['curricullumSubject', 'subject', 'student', 'curricullum'];
-
-    try {
-      for (const model of models) {
-        await this[model].deleteMany();
-        await this.$executeRaw`ALTER TABLE ${model} AUTO_INCREMENT = 1;`;
-      }
-    } catch (err) {
-      console.error(err);
-      process.exit(1);
-    } finally {
-      console.log('[seed.ts] cleanDatabase() shutting down...');
-    }
+    return Promise.all(
+      modelKeys.map((modelKey) => this[modelKey].deleteMany()),
+    );
   }
 }
