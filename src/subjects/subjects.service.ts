@@ -3,6 +3,7 @@ import { PrismaService } from '../shared/services/prisma.service';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { BusinessRuleException } from '../shared/helper/businessRuleException.helper';
 
+//TODO: update create-subject.dto.ts to subject.dto
 @Injectable()
 export class SubjectsService {
   constructor(private prisma: PrismaService) {}
@@ -75,5 +76,20 @@ export class SubjectsService {
     }
 
     return subject;
+  }
+
+  async update(subjectId: number, createSubjectDto: CreateSubjectDto) {
+    await this.findOne(subjectId);
+
+    if (!createSubjectDto.name) {
+      throw new BusinessRuleException('Name not found');
+    }
+
+    return this.prisma.subject.update({
+      where: { id: subjectId },
+      data: {
+        name: createSubjectDto.name,
+      },
+    });
   }
 }

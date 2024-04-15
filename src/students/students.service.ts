@@ -6,7 +6,7 @@ import { GradeDto } from '../shared/dto/grade.dto';
 import { BusinessRuleException } from '../shared/helper/businessRuleException.helper';
 
 //TODO: Refactor to use repositories
-//TODO: Add update and delete student methods
+//TODO: update create-student.dto.ts to student.dto
 @Injectable()
 export class StudentsService {
   constructor(private prisma: PrismaService) {}
@@ -176,6 +176,24 @@ export class StudentsService {
     return this.prisma.student.delete({
       where: {
         id: studentId,
+      },
+    });
+  }
+
+  async update(studentId: number, createStudentDto: CreateStudentDto) {
+    await this.findOne(studentId);
+
+    if (!createStudentDto.name || !createStudentDto.curricullumId) {
+      throw new BusinessRuleException('Name or curricullumId not found');
+    }
+
+    return this.prisma.student.update({
+      where: {
+        id: studentId,
+      },
+      data: {
+        name: createStudentDto.name,
+        curricullumId: createStudentDto.curricullumId,
       },
     });
   }

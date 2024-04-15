@@ -1,10 +1,12 @@
 import {
   Body,
-  Controller, Delete,
+  Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
   Post,
+  Put,
   Res,
 } from '@nestjs/common';
 import { SubjectsService } from './subjects.service';
@@ -27,6 +29,19 @@ export class SubjectsController {
   ): Promise<void> {
     const subject = await this.subjectService.findOne(Number(params.id));
 
+    res.status(HttpStatus.OK).json(subject);
+  }
+
+  @Put(':id')
+  async update(
+    @Param() params: { id: number },
+    @Body() createSubjectDto: CreateSubjectDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    const subject = await this.subjectService.update(
+      Number(params.id),
+      createSubjectDto,
+    );
     res.status(HttpStatus.OK).json(subject);
   }
 

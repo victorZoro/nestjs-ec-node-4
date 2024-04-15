@@ -5,7 +5,8 @@ import {
   Get,
   HttpStatus,
   Param,
-  Post, Put,
+  Post,
+  Put,
   Res,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
@@ -99,5 +100,18 @@ export class StudentsController {
     const grade = await this.studentService.updateGrade(gradeDto);
 
     res.status(HttpStatus.OK).send(grade);
+  }
+
+  @Put(':id')
+  async update(
+    @Param() params: { id: number },
+    @Body() createStudentDto: CreateStudentDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    const student = await this.studentService.update(
+      Number(params.id),
+      createStudentDto,
+    );
+    res.status(HttpStatus.OK).send(student);
   }
 }
