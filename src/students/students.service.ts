@@ -13,8 +13,8 @@ export class StudentsService {
   async findAll(): Promise<any> {
     const students = await this.prisma.student.findMany();
 
-    if (!students) {
-      throw new BusinessRuleException('Students not found');
+    if (!students || students.length === 0) {
+      throw new BusinessRuleException('There are no students');
     }
 
     return students;
@@ -32,6 +32,8 @@ export class StudentsService {
     return student;
   }
   async findAllByScore(): Promise<any> {
+    await this.findAll();
+
     return this.prisma.$queryRaw`
         SELECT students.*,
                (SELECT AVG(value) FROM Grade WHERE studentId = students.id) as avgGrade
@@ -54,6 +56,8 @@ export class StudentsService {
   }
 
   async findGradeBySubjectId(gradeDto: GradeDto): Promise<any> {
+    await this.findOne(Number(gradeDto.studentId));
+
     const grade = this.prisma.grade.findMany({
       where: {
         studentId: Number(gradeDto.studentId),
@@ -116,6 +120,8 @@ export class StudentsService {
   }
 
   async findAllRecords() {
+    await this.findAll();
+
     const records = this.prisma.grade.findMany({
       select: {
         value: true,

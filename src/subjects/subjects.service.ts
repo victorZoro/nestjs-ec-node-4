@@ -9,7 +9,7 @@ export class SubjectsService {
   async findAll(): Promise<any> {
     const subjects = await this.prisma.subject.findMany();
 
-    if (!subjects) {
+    if (!subjects || subjects.length === 0) {
       throw new BusinessRuleException('There are no subjects');
     }
 

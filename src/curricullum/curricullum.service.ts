@@ -19,7 +19,7 @@ export class CurricullumService {
       },
     });
 
-    if (!curricullums) {
+    if (!curricullums || curricullums.length === 0) {
       throw new BusinessRuleException('There are no curriculums.');
     }
 
