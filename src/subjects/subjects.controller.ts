@@ -16,15 +16,8 @@ export class SubjectsController {
   constructor(private readonly subjectService: SubjectsService) {}
   @Get()
   async findAll(@Res() res: Response): Promise<void> {
-    try {
-      const subjects = await this.subjectService.findAll();
-      res.status(HttpStatus.OK).json(subjects);
-    } catch (err) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: err.message,
-      });
-    }
+    const subjects = await this.subjectService.findAll();
+    res.status(HttpStatus.OK).json(subjects);
   }
 
   @Get(':id')
@@ -32,15 +25,9 @@ export class SubjectsController {
     @Param() params: { id: number },
     @Res() res: Response,
   ): Promise<void> {
-    try {
-      const subject = await this.subjectService.findOne(Number(params.id));
-      res.status(HttpStatus.OK).json(subject);
-    } catch (err) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: err.message,
-      });
-    }
+    const subject = await this.subjectService.findOne(Number(params.id));
+
+    res.status(HttpStatus.OK).json(subject);
   }
 
   @Post()
@@ -48,15 +35,8 @@ export class SubjectsController {
     @Body() createSubjectDto: CreateSubjectDto,
     @Res() res: Response,
   ): Promise<void> {
-    try {
-      const subject = await this.subjectService.create(createSubjectDto);
-      res.status(HttpStatus.OK).json(subject);
-    } catch (err) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: err.message,
-      });
-    }
+    const subject = await this.subjectService.create(createSubjectDto);
+    res.status(HttpStatus.OK).json(subject);
   }
 
   @Get(':id/curricullums')

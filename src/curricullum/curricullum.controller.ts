@@ -45,25 +45,26 @@ export class CurricullumController {
     }
   }
 
-  @Post()
-  async create(
-    @Body() body: { subjectIds: number[] },
-    @Res() res: Response,
-  ): Promise<void> {
-    try {
-      const curricullum = await this.curricullumService.create(body.subjectIds);
-      const subjects =
-        await this.curricullumService.findSubjectsByCurricullumId(
-          curricullum.id,
-        );
-      res.status(HttpStatus.OK).send({ curricullum, subjects });
-    } catch (err) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: err.message,
-      });
-    }
-  }
+  // //TODO: change verification for existing subjects
+  // @Post()
+  // async create(
+  //   @Body() body: { subjectIds: number[] },
+  //   @Res() res: Response,
+  // ): Promise<void> {
+  //   try {
+  //     const curricullum = await this.curricullumService.create(body.subjectIds);
+  //     const subjects =
+  //       await this.curricullumService.findOne(
+  //         curricullum.id,
+  //       );
+  //     res.status(HttpStatus.OK).send({ curricullum, subjects });
+  //   } catch (err) {
+  //     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+  //       status: HttpStatus.INTERNAL_SERVER_ERROR,
+  //       message: err.message,
+  //     });
+  //   }
+  // }
 
   @Post('add')
   async addSubject(
@@ -74,25 +75,6 @@ export class CurricullumController {
       const curricullum =
         await this.curricullumService.addSubject(curricullumDto);
       res.status(HttpStatus.OK).send(curricullum);
-    } catch (err) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: err.message,
-      });
-    }
-  }
-
-  @Get(':id/subjects')
-  async findSubjectsByCurricullumId(
-    @Param() params: { id: number },
-    @Res() res: Response,
-  ): Promise<void> {
-    try {
-      const subjects =
-        await this.curricullumService.findSubjectsByCurricullumId(
-          Number(params.id),
-        );
-      res.status(HttpStatus.OK).json(subjects);
     } catch (err) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         status: HttpStatus.INTERNAL_SERVER_ERROR,

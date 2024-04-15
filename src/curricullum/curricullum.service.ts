@@ -1,26 +1,50 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../shared/services/prisma.service';
 import { CurricullumDto } from './dto/curricullum.dto';
+import { BusinessRuleException } from '../shared/helper/businessRuleException.helper';
 
+//TODO: Refactor to use repositories
+//TODO: Add update and delete curricullum methods
 @Injectable()
 export class CurricullumService {
   constructor(private prisma: PrismaService) {}
   async findAll(): Promise<any> {
-    try {
-      return await this.prisma.curricullum.findMany();
-    } catch (err) {
-      throw new Error(err);
+    const curricullums = await this.prisma.curricullum.findMany({
+      include: {
+        subjects: {
+          select: {
+            subjectId: true,
+          },
+        },
+      },
+    });
+
+    if (!curricullums) {
+      throw new BusinessRuleException('There are no curriculums.');
     }
+
+    return curricullums;
   }
 
-  async findOne(id: number): Promise<any> {
-    try {
-      return await this.prisma.curricullum.findUnique({
-        where: { id: id },
-      });
-    } catch (err) {
-      throw new Error(err);
+  async findOne(curricullumId: number): Promise<any> {
+    const curricullum = await this.prisma.curricullum.findUnique({
+      where: {
+        id: curricullumId,
+      },
+      include: {
+        subjects: {
+          select: {
+            subjectId: true,
+          },
+        },
+      },
+    });
+
+    if (!curricullum) {
+      throw new BusinessRuleException('Curricullum not found');
     }
+
+    return curricullum;
   }
 
   async create(subjectIds: number[]): Promise<any> {
@@ -56,18 +80,6 @@ export class CurricullumService {
         data: {
           curricullumId: curricullumDto.curricullumId,
           subjectId: curricullumDto.subjectId,
-        },
-      });
-    } catch (err) {
-      throw new Error(err);
-    }
-  }
-
-  async findSubjectsByCurricullumId(curricullumId: number): Promise<any> {
-    try {
-      return await this.prisma.curricullumSubject.findMany({
-        where: {
-          curricullumId: curricullumId,
         },
       });
     } catch (err) {
