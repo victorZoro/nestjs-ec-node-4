@@ -1,6 +1,6 @@
-import { prisma } from '../../seed';
+import { PrismaService } from '../../../src/shared/services/prisma.service';
 
-export async function getRandomSubjects(min: number) {
+export async function getRandomSubjects(prisma: PrismaService, min: number) {
   console.log('[seed.ts] getRandomSubjects started...');
 
   const subjects = await prisma.subject.findMany();

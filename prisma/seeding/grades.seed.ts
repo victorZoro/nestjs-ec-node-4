@@ -1,5 +1,5 @@
-import { prisma } from '../seed';
 import { Student, Subject } from '@prisma/client';
+import { PrismaService } from '../../src/shared/services/prisma.service';
 
 const values = [
   ...Array.from({ length: 15 }, () => Math.floor(Math.random() * 40) + 61),
@@ -7,6 +7,7 @@ const values = [
 ];
 
 export async function seedGrades(
+  prisma: PrismaService,
   allStudents: Student[],
   allSubjects: Subject[],
   numGradesPerSubject: number,

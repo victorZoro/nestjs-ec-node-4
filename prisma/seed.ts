@@ -72,9 +72,15 @@ async function seedStudents(curricullums: any[], numberOfStudents: number) {
   }
 }
 
-async function seedCurricullumSubjects(allCurricullums: any) {
+async function seedCurricullumSubjects(
+  prisma: PrismaService,
+  allCurricullums: any,
+) {
   try {
-    const curricullumSubjects = await getCurricullumSubjects(allCurricullums);
+    const curricullumSubjects = await getCurricullumSubjects(
+      prisma,
+      allCurricullums,
+    );
 
     await Promise.all(
       curricullumSubjects.map(async (curricullumSubject) => {
@@ -98,17 +104,17 @@ async function main() {
     await prisma.cleanDatabase();
 
     await seedCurricullums();
-    const allCurricullums = await findAllCurricullums();
+    const allCurricullums = await findAllCurricullums(prisma);
 
     await seedSubjects();
-    const allSubjects = await findAllSubjects();
+    const allSubjects = await findAllSubjects(prisma);
 
     await seedStudents(allCurricullums, 10);
-    const allStudents = await findAllStudents();
+    const allStudents = await findAllStudents(prisma);
 
-    await seedCurricullumSubjects(allCurricullums);
+    await seedCurricullumSubjects(prisma, allCurricullums);
 
-    await seedGrades(allStudents, allSubjects, 3);
+    await seedGrades(prisma, allStudents, allSubjects, 3);
 
     console.log('[seed.ts] seedDatabase() ended...');
   } catch (err) {
