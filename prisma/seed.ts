@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client';
 import { subjects } from './seeding/subjects.seed';
 import { getCurricullumSubjects } from './seeding/helper/generateCurricullumSubjects.helper';
 import {
@@ -8,10 +7,10 @@ import {
 } from './seeding/helper/findAll.helper';
 import * as process from 'process';
 import { seedGrades } from './seeding/grades.seed';
-import { cleanDatabase } from './seeding/helper/cleanDatabase.helper';
 import { generateStudents } from './seeding/helper/generateStudents.helper';
+import { PrismaService } from '../src/shared/services/prisma.service';
 
-export const prisma = new PrismaClient();
+const prisma = new PrismaService();
 
 async function seedSubjects() {
   console.log('[seed.ts] seedSubjects() started...');
@@ -96,7 +95,7 @@ async function main() {
   console.log('[seed.ts] seedDatabase() started...');
 
   try {
-    await cleanDatabase();
+    await prisma.cleanDatabase();
 
     await seedCurricullums();
     const allCurricullums = await findAllCurricullums();
