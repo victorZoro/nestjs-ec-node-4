@@ -8,7 +8,7 @@ import {
 } from './seeding/helper/findAll.helper';
 import * as process from 'process';
 import { seedGrades } from './seeding/grades.seed';
-import { deleteAllData } from './seeding/helper/deleteAll';
+import { cleanDatabase } from './seeding/helper/cleanDatabase.helper';
 import { generateStudents } from './seeding/helper/generateStudents.helper';
 
 export const prisma = new PrismaClient();
@@ -96,7 +96,7 @@ async function main() {
   console.log('[seed.ts] seedDatabase() started...');
 
   try {
-    await deleteAllData();
+    await cleanDatabase();
 
     await seedCurricullums();
     const allCurricullums = await findAllCurricullums();
