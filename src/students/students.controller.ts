@@ -1,10 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
-  Post,
+  Post, Put,
   Res,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
@@ -40,6 +41,15 @@ export class StudentsController {
     @Res() res: Response,
   ): Promise<void> {
     const student = await this.studentService.findOne(Number(params.id));
+    res.status(HttpStatus.OK).send(student);
+  }
+
+  @Delete(':id')
+  async delete(
+    @Param() params: { id: number },
+    @Res() res: Response,
+  ): Promise<void> {
+    const student = await this.studentService.delete(Number(params.id));
     res.status(HttpStatus.OK).send(student);
   }
 
@@ -81,7 +91,7 @@ export class StudentsController {
     res.status(HttpStatus.OK).send(grade);
   }
 
-  @Post('grades/update')
+  @Put('grades/update')
   async updateGrade(
     @Body() gradeDto: GradeDto,
     @Res() res: Response,

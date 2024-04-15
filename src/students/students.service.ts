@@ -169,4 +169,14 @@ export class StudentsService {
 
     return records;
   }
+
+  async delete(studentId: number) {
+    await this.findOne(studentId);
+
+    return this.prisma.student.delete({
+      where: {
+        id: studentId,
+      },
+    });
+  }
 }

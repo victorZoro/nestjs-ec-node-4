@@ -1,6 +1,6 @@
 import {
   Body,
-  Controller,
+  Controller, Delete,
   Get,
   HttpStatus,
   Param,
@@ -27,6 +27,15 @@ export class SubjectsController {
   ): Promise<void> {
     const subject = await this.subjectService.findOne(Number(params.id));
 
+    res.status(HttpStatus.OK).json(subject);
+  }
+
+  @Delete(':id')
+  async delete(
+    @Param() params: { id: number },
+    @Res() res: Response,
+  ): Promise<void> {
+    const subject = await this.subjectService.delete(Number(params.id));
     res.status(HttpStatus.OK).json(subject);
   }
 

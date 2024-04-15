@@ -16,9 +16,9 @@ export class SubjectsService {
     return subjects;
   }
 
-  async findOne(id: number): Promise<any> {
+  async findOne(subjectId: number): Promise<any> {
     const subject = await this.prisma.subject.findUnique({
-      where: { id: id },
+      where: { id: subjectId },
     });
 
     if (!subject) {
@@ -63,5 +63,17 @@ export class SubjectsService {
     }
 
     return curricullums;
+  }
+
+  async delete(subjectId: number) {
+    const subject = await this.prisma.subject.delete({
+      where: { id: subjectId },
+    });
+
+    if (!subject) {
+      throw new BusinessRuleException('Subject not found');
+    }
+
+    return subject;
   }
 }
