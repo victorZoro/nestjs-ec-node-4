@@ -44,30 +44,32 @@ export class CurricullumService {
       throw new BusinessRuleException('Curricullum not found');
     }
 
-    return curricullum;
+    return { curricullum, subjects: curricullum.subjects };
   }
 
   async create(subjectIds: number[]): Promise<any> {
-    try {
-      this.validateSubjectCount(subjectIds, 5);
+    this.validateSubjectCount(subjectIds, 5);
 
-      const curricullum = await this.prisma.curricullum.create({});
-
-      await this.prisma.curricullumSubject.createMany({
-        data: subjectIds.map((subjectId) => {
-          return {
-            curricullumId: curricullum.id,
-            subjectId: subjectId,
-          };
-        }),
-      });
-
-      return curricullum;
-    } catch (err) {
-      throw new Error(err);
-    }
+    return this.prisma.curricullum.create({
+      data: {
+        subjects: {
+          createMany: {
+            data: subjectIds.map((subjectId) => ({
+              subjectId: subjectId,
+            })),
+          },
+        },
+      },
+      include: {
+        subjects: {
+          select: {
+            id: true,
+            subjectId: true,
+          },
+        },
+      },
+    });
   }
-
   validateSubjectCount(subjectIds: number[], minimum: number): void {
     if (subjectIds.length < minimum) {
       throw new Error('Minimum subject count is not met');
@@ -78,12 +80,16 @@ export class CurricullumService {
     try {
       return await this.prisma.curricullumSubject.create({
         data: {
-          curricullumId: curricullumDto.curricullumId,
-          subjectId: curricullumDto.subjectId,
+          curricullums: {
+            connect: { id: curricullumDto.curricullumId },
+          },
+          subjects: {
+            connect: { id: curricullumDto.subjectId },
+          },
         },
       });
-    } catch (err) {
-      throw new Error(err);
+    } catch (error) {
+      throw new BusinessRuleException('Subject not added to curricullum');
     }
   }
 }

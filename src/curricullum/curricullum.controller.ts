@@ -45,26 +45,15 @@ export class CurricullumController {
     }
   }
 
-  // //TODO: change verification for existing subjects
-  // @Post()
-  // async create(
-  //   @Body() body: { subjectIds: number[] },
-  //   @Res() res: Response,
-  // ): Promise<void> {
-  //   try {
-  //     const curricullum = await this.curricullumService.create(body.subjectIds);
-  //     const subjects =
-  //       await this.curricullumService.findOne(
-  //         curricullum.id,
-  //       );
-  //     res.status(HttpStatus.OK).send({ curricullum, subjects });
-  //   } catch (err) {
-  //     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-  //       status: HttpStatus.INTERNAL_SERVER_ERROR,
-  //       message: err.message,
-  //     });
-  //   }
-  // }
+  //TODO: change verification for existing subjects
+  @Post()
+  async create(
+    @Body() body: { subjectIds: number[] },
+    @Res() res: Response,
+  ): Promise<void> {
+    const curricullum = await this.curricullumService.create(body.subjectIds);
+    res.status(HttpStatus.OK).send(curricullum);
+  }
 
   @Post('add')
   async addSubject(
