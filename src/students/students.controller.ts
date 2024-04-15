@@ -34,7 +34,16 @@ export class StudentsController {
     res.status(HttpStatus.OK).send(records);
   }
 
-  @Get('records/:id')
+  @Get(':id')
+  async findOne(
+    @Param() params: { id: number },
+    @Res() res: Response,
+  ): Promise<void> {
+    const student = await this.studentService.findOne(Number(params.id));
+    res.status(HttpStatus.OK).send(student);
+  }
+
+  @Get(':id/records')
   async findRecordsByStudent(
     @Param() params: { id: number },
     @Res() res: Response,
@@ -45,15 +54,6 @@ export class StudentsController {
     res.status(HttpStatus.OK).send(record);
   }
 
-  @Get(':id')
-  async findOne(
-    @Param() params: { id: number },
-    @Res() res: Response,
-  ): Promise<void> {
-    const student = await this.studentService.findOne(Number(params.id));
-    res.status(HttpStatus.OK).send(student);
-  }
-
   @Post()
   async create(
     @Body() createStudentDto: CreateStudentDto,
@@ -61,15 +61,6 @@ export class StudentsController {
   ): Promise<void> {
     const student = await this.studentService.create(createStudentDto);
     res.status(HttpStatus.OK).send(student);
-  }
-
-  @Get(':id/grades')
-  async findAllGrades(
-    @Param() params: { id: number },
-    @Res() res: Response,
-  ): Promise<void> {
-    const grades = await this.studentService.findAllGrades(Number(params.id));
-    res.status(HttpStatus.OK).send(grades);
   }
 
   @Get(':studentId/grades/:subjectId')

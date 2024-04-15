@@ -53,26 +53,6 @@ export class StudentsService {
     });
   }
 
-  async findAllGrades(studentId: number): Promise<any> {
-    const grades = this.prisma.grade.findMany({
-      where: {
-        studentId: studentId,
-      },
-      select: {
-        id: true,
-        studentId: true,
-        subjectId: true,
-        value: true,
-      },
-    });
-
-    if (!grades) {
-      throw new BusinessRuleException('Student not found');
-    }
-
-    return grades;
-  }
-
   async findGradeBySubjectId(gradeDto: GradeDto): Promise<any> {
     const grade = this.prisma.grade.findMany({
       where: {
@@ -96,7 +76,7 @@ export class StudentsService {
 
   async addGrade(gradeDto: GradeDto) {
     if (await isSubjectCompleted(this.prisma, gradeDto)) {
-      throw new Error(
+      throw new BusinessRuleException(
         'This subject has been completed and cannot accept new grades.',
       );
     }
