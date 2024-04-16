@@ -17,56 +17,6 @@ describe('Curricullum Integration Tests', () => {
     await prisma.cleanDatabase();
   });
 
-  describe('create()', () => {
-    it('should create a curricullum', async () => {
-      const subjectNames = [
-        'subject1',
-        'subject2',
-        'subject3',
-        'subject4',
-        'subject5',
-      ];
-
-      const createdSubjects = await createSubjects(prisma, subjectNames);
-
-      const subjectIds = createdSubjects.map((subject) => subject.id);
-
-      const response = await curricullumsService.create(subjectIds);
-
-      expect(response).toEqual({
-        id: expect.any(Number),
-        subjects: subjectIds.map((subjectId) => ({ subjectId })),
-      });
-    });
-
-    it('should throw an error if the number of subjects is not 5', async () => {
-      await expect(curricullumsService.create([1, 2, 3, 4])).rejects.toThrow(
-        'Minimum subject count is not met',
-      );
-    });
-
-    it('should throw an error if one or more subjects do not exist', async () => {
-      const subjects = await prisma.subject.findMany({
-        select: {
-          id: true,
-        },
-        orderBy: {
-          id: 'desc',
-        },
-        take: 4,
-      });
-
-      const nonExistentId = subjects[0].id + 1;
-
-      const subjectIds = subjects.map((subject) => subject.id);
-      subjectIds.push(nonExistentId);
-
-      await expect(curricullumsService.create(subjectIds)).rejects.toThrow(
-        'One or more subjects do not exist',
-      );
-    });
-  });
-
   describe('findALl()', () => {
     it('should return all curriculums', async () => {
       const subjectNames = [
@@ -186,6 +136,96 @@ describe('Curricullum Integration Tests', () => {
       await expect(
         curricullumsService.addSubject(curricullumDto),
       ).rejects.toThrow('Subject not added to curricullum');
+    });
+  });
+
+  describe('create()', () => {
+    it('should create a curricullum', async () => {
+      const subjectNames = [
+        'subject1',
+        'subject2',
+        'subject3',
+        'subject4',
+        'subject5',
+      ];
+
+      const createdSubjects = await createSubjects(prisma, subjectNames);
+
+      const subjectIds = createdSubjects.map((subject) => subject.id);
+
+      const response = await curricullumsService.create(subjectIds);
+
+      expect(response).toEqual({
+        id: expect.any(Number),
+        subjects: subjectIds.map((subjectId) => ({ subjectId })),
+      });
+    });
+
+    it('should throw an error if the number of subjects is not 5', async () => {
+      await expect(curricullumsService.create([1, 2, 3, 4])).rejects.toThrow(
+        'Minimum subject count is not met',
+      );
+    });
+
+    it('should throw an error if one or more subjects do not exist', async () => {
+      const subjects = await prisma.subject.findMany({
+        select: {
+          id: true,
+        },
+        orderBy: {
+          id: 'desc',
+        },
+        take: 4,
+      });
+
+      const nonExistentId = subjects[0].id + 1;
+
+      const subjectIds = subjects.map((subject) => subject.id);
+      subjectIds.push(nonExistentId);
+
+      await expect(curricullumsService.create(subjectIds)).rejects.toThrow(
+        'One or more subjects do not exist',
+      );
+    });
+
+    it('should throw an error if the curricullum is not created', async () => {
+      const subjectNames = [
+        'subject1',
+        'subject2',
+        'subject3',
+        'subject4',
+        'subject5',
+      ];
+
+      const createdSubjects = await createSubjects(prisma, subjectNames);
+
+      const subjectIds = createdSubjects.map((subject) => subject.id);
+
+      jest.spyOn(prisma.curricullum, 'create').mockResolvedValue(null);
+
+      await expect(curricullumsService.create(subjectIds)).rejects.toThrow(
+        'Curricullum not created',
+      );
+    });
+
+    it('should throw an error if the curricullumSubjects are not created', async () => {
+      const subjectNames = [
+        'subject1',
+        'subject2',
+        'subject3',
+        'subject4',
+        'subject5',
+      ];
+
+      const createdSubjects = await createSubjects(prisma, subjectNames);
+
+      const subjectIds = createdSubjects.map((subject) => subject.id);
+
+      jest.spyOn(prisma.curricullumSubject, 'create').mockResolvedValue(null);
+
+      await expect(curricullumsService.create(subjectIds)).rejects.toThrow(
+        'Curricullum not created',
+      );
     });
   });
 });
