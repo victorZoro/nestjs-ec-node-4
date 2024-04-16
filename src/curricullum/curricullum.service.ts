@@ -50,6 +50,18 @@ export class CurricullumService {
   async create(subjectIds: number[]): Promise<any> {
     this.validateSubjectCount(subjectIds, 5);
 
+    const subjects = await this.prisma.subject.findMany({
+      where: {
+        id: {
+          in: subjectIds,
+        },
+      },
+    });
+
+    if (subjects.length !== subjectIds.length) {
+      throw new Error('One or more subjects do not exist');
+    }
+
     return this.prisma.curricullum.create({
       data: {
         subjects: {
@@ -63,7 +75,6 @@ export class CurricullumService {
       include: {
         subjects: {
           select: {
-            id: true,
             subjectId: true,
           },
         },
@@ -72,7 +83,7 @@ export class CurricullumService {
   }
   validateSubjectCount(subjectIds: number[], minimum: number): void {
     if (subjectIds.length < minimum) {
-      throw new Error('Minimum subject count is not met');
+      throw new BusinessRuleException('Minimum subject count is not met');
     }
   }
 
