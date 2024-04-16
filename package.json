@@ -19,8 +19,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:restart": "docker compose down && docker compose up -d && sleep 1",
-    "pretest:int": "npm run db:restart && dotenv -e .env.test -- npx prisma migrate reset --force",
+    "db:restart": "docker compose down && docker compose up -d --force-recreate && sleep 5",
+    "pretest:int": "npm run db:restart && npx prisma migrate dev --preview-feature",
     "test:int": "jest -i --no-cache --watch --config ./test/jest-int.json"
   },
   "prisma": {
