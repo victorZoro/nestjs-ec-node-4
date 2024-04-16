@@ -21,6 +21,10 @@ describe('Subjects Integration Tests', () => {
     await prisma.cleanDatabase();
   });
 
+  afterAll(async () => {
+    await prisma.cleanDatabase();
+  });
+
   describe('findAll()', () => {
     it('should return all subjects', async () => {
       const createdSubject = await subjectsService.create({

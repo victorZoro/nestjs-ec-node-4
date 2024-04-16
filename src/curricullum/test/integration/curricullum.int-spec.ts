@@ -17,6 +17,10 @@ describe('Curricullum Integration Tests', () => {
     await prisma.cleanDatabase();
   });
 
+  afterAll(async () => {
+    await prisma.cleanDatabase();
+  });
+
   describe('findALl()', () => {
     it('should return all curriculums', async () => {
       const subjectNames = [
