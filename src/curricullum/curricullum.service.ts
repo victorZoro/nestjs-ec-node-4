@@ -62,7 +62,7 @@ export class CurricullumService {
       throw new Error('One or more subjects do not exist');
     }
 
-    return this.prisma.curricullum.create({
+    const curricullum = await this.prisma.curricullum.create({
       data: {
         subjects: {
           createMany: {
@@ -80,6 +80,12 @@ export class CurricullumService {
         },
       },
     });
+
+    if (!curricullum) {
+      throw new BusinessRuleException('Curricullum not created');
+    }
+
+    return curricullum;
   }
   validateSubjectCount(subjectIds: number[], minimum: number): void {
     if (subjectIds.length < minimum) {
