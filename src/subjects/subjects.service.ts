@@ -34,15 +34,11 @@ export class SubjectsService {
       throw new BusinessRuleException('Name not found');
     }
 
-    const subject = this.prisma.subject.create({
+    const subject = await this.prisma.subject.create({
       data: {
         name: createSubjectDto.name,
       },
     });
-
-    if (!subject) {
-      throw new BusinessRuleException('Subject not created');
-    }
 
     return subject;
   }
@@ -67,15 +63,11 @@ export class SubjectsService {
   }
 
   async delete(subjectId: number) {
-    const subject = await this.prisma.subject.delete({
+    await this.findOne(subjectId);
+
+    return this.prisma.subject.delete({
       where: { id: subjectId },
     });
-
-    if (!subject) {
-      throw new BusinessRuleException('Subject not found');
-    }
-
-    return subject;
   }
 
   async update(subjectId: number, createSubjectDto: CreateSubjectDto) {
