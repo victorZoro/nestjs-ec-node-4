@@ -2,14 +2,16 @@ import { Test } from '@nestjs/testing';
 import { PrismaService } from '../../../shared/services/prisma.service';
 import { SubjectsModule } from '../../subjects.module';
 import { SubjectsService } from '../../subjects.service';
-import { createSubjects } from '../helper/createSubjects.helper';
+import { getSubjectIds } from '../helper/subjects.int-spec.helper';
 import { CurricullumModule } from '../../../curricullum/curricullum.module';
-import { CurricullumService } from '../../../curricullum/curricullum.service';
+import {
+  createCurricullum,
+  getDefaultSubjectNames,
+} from '../../../curricullum/test/helper/curricullum.int-spec.helper';
 
 describe('Subjects Integration Tests', () => {
   let prisma: PrismaService;
   let subjectsService: SubjectsService;
-  let curricullumsService: CurricullumService;
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [SubjectsModule, CurricullumModule],
@@ -17,11 +19,6 @@ describe('Subjects Integration Tests', () => {
 
     prisma = moduleRef.get<PrismaService>(PrismaService);
     subjectsService = moduleRef.get<SubjectsService>(SubjectsService);
-    curricullumsService = moduleRef.get<CurricullumService>(CurricullumService);
-    await prisma.cleanDatabase();
-  });
-
-  afterAll(async () => {
     await prisma.cleanDatabase();
   });
 
@@ -47,19 +44,8 @@ describe('Subjects Integration Tests', () => {
 
   describe('findCurricullumBySubjectId()', () => {
     it('should return the curriculums that contain the subject', async () => {
-      const subjectNames = [
-        'subject1',
-        'subject2',
-        'subject3',
-        'subject4',
-        'subject5',
-      ];
-
-      const createdSubjects = await createSubjects(prisma, subjectNames);
-
-      const subjectIds = createdSubjects.map((subject) => subject.id);
-
-      const createdCurricullum = await curricullumsService.create(subjectIds);
+      const subjectIds = await getSubjectIds(prisma, getDefaultSubjectNames());
+      const createdCurricullum = await createCurricullum(prisma, subjectIds);
 
       const response = await subjectsService.findCurricullumBySubjectId(
         subjectIds[0],

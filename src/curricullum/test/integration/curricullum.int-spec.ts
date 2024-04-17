@@ -2,7 +2,8 @@ import { PrismaService } from '../../../shared/services/prisma.service';
 import { Test } from '@nestjs/testing';
 import { CurricullumModule } from '../../curricullum.module';
 import { CurricullumService } from '../../curricullum.service';
-import { createSubjects } from '../../../subjects/test/helper/createSubjects.helper';
+import { getSubjectIds } from '../../../subjects/test/helper/subjects.int-spec.helper';
+import { getDefaultSubjectNames } from '../helper/curricullum.int-spec.helper';
 
 describe('Curricullum Integration Tests', () => {
   let prisma: PrismaService;
@@ -17,24 +18,9 @@ describe('Curricullum Integration Tests', () => {
     await prisma.cleanDatabase();
   });
 
-  afterAll(async () => {
-    await prisma.cleanDatabase();
-  });
-
   describe('findALl()', () => {
     it('should return all curriculums', async () => {
-      const subjectNames = [
-        'subject1',
-        'subject2',
-        'subject3',
-        'subject4',
-        'subject5',
-      ];
-
-      const createdSubjects = await createSubjects(prisma, subjectNames);
-
-      const subjectIds = createdSubjects.map((subject) => subject.id);
-
+      const subjectIds = await getSubjectIds(prisma, getDefaultSubjectNames());
       await curricullumsService.create(subjectIds);
 
       const response = await curricullumsService.findAll();
@@ -55,20 +41,8 @@ describe('Curricullum Integration Tests', () => {
 
   describe('findOne()', () => {
     it('should return a curricullum', async () => {
-      const subjectNames = [
-        'subject1',
-        'subject2',
-        'subject3',
-        'subject4',
-        'subject5',
-      ];
-
-      const createdSubjects = await createSubjects(prisma, subjectNames);
-
-      const subjectIds = createdSubjects.map((subject) => subject.id);
-
+      const subjectIds = await getSubjectIds(prisma, getDefaultSubjectNames());
       const createdCurricullum = await curricullumsService.create(subjectIds);
-
       const response = await curricullumsService.findOne(createdCurricullum.id);
 
       expect(response).toEqual({
@@ -95,17 +69,7 @@ describe('Curricullum Integration Tests', () => {
         data: { name: subjectName },
       });
 
-      const subjectNames = [
-        'subject1',
-        'subject2',
-        'subject3',
-        'subject4',
-        'subject5',
-      ];
-
-      const createdSubjects = await createSubjects(prisma, subjectNames);
-
-      const subjectIds = createdSubjects.map((subject) => subject.id);
+      const subjectIds = await getSubjectIds(prisma, getDefaultSubjectNames());
 
       const createdCurricullum = await curricullumsService.create(subjectIds);
 
@@ -145,17 +109,7 @@ describe('Curricullum Integration Tests', () => {
 
   describe('create()', () => {
     it('should create a curricullum', async () => {
-      const subjectNames = [
-        'subject1',
-        'subject2',
-        'subject3',
-        'subject4',
-        'subject5',
-      ];
-
-      const createdSubjects = await createSubjects(prisma, subjectNames);
-
-      const subjectIds = createdSubjects.map((subject) => subject.id);
+      const subjectIds = await getSubjectIds(prisma, getDefaultSubjectNames());
 
       const response = await curricullumsService.create(subjectIds);
 
@@ -193,17 +147,7 @@ describe('Curricullum Integration Tests', () => {
     });
 
     it('should throw an error if the curricullum is not created', async () => {
-      const subjectNames = [
-        'subject1',
-        'subject2',
-        'subject3',
-        'subject4',
-        'subject5',
-      ];
-
-      const createdSubjects = await createSubjects(prisma, subjectNames);
-
-      const subjectIds = createdSubjects.map((subject) => subject.id);
+      const subjectIds = await getSubjectIds(prisma, getDefaultSubjectNames());
 
       jest.spyOn(prisma.curricullum, 'create').mockResolvedValue(null);
 
@@ -213,17 +157,7 @@ describe('Curricullum Integration Tests', () => {
     });
 
     it('should throw an error if the curricullumSubjects are not created', async () => {
-      const subjectNames = [
-        'subject1',
-        'subject2',
-        'subject3',
-        'subject4',
-        'subject5',
-      ];
-
-      const createdSubjects = await createSubjects(prisma, subjectNames);
-
-      const subjectIds = createdSubjects.map((subject) => subject.id);
+      const subjectIds = await getSubjectIds(prisma, getDefaultSubjectNames());
 
       jest.spyOn(prisma.curricullumSubject, 'create').mockResolvedValue(null);
 
