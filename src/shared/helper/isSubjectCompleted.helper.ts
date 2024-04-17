@@ -15,7 +15,7 @@ export async function isSubjectCompleted(
     },
   });
 
-  if (grades.length % 3 !== 0) {
+  if (grades || grades.length % 3 !== 0) {
     return false;
   }
 

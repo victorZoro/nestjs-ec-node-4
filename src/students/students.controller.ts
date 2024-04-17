@@ -79,7 +79,7 @@ export class StudentsController {
     @Param() params: GradeDto,
     @Res() res: Response,
   ): Promise<void> {
-    const grade = await this.studentService.findGradeBySubjectId(params);
+    const grade = await this.studentService.findStudentGradesBySubjectId(params);
     res.status(HttpStatus.OK).send(grade);
   }
 

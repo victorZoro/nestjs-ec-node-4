@@ -55,8 +55,9 @@ export class StudentsService {
     });
   }
 
-  async findGradeBySubjectId(gradeDto: GradeDto): Promise<any> {
+  async findStudentGradesBySubjectId(gradeDto: GradeDto): Promise<any> {
     await this.findOne(Number(gradeDto.studentId));
+    await this.findOneSubject(Number(gradeDto.subjectId));
 
     const grade = this.prisma.grade.findMany({
       where: {
@@ -79,6 +80,13 @@ export class StudentsService {
   }
 
   async addGrade(gradeDto: GradeDto) {
+    if (!gradeDto.value || gradeDto.value < 0 || gradeDto.value > 100) {
+      throw new BusinessRuleException('Invalid grade');
+    }
+
+    await this.findOne(gradeDto.studentId);
+    await this.findOneSubject(gradeDto.subjectId);
+
     if (await isSubjectCompleted(this.prisma, gradeDto)) {
       throw new BusinessRuleException(
         'This subject has been completed and cannot accept new grades.',
@@ -100,14 +108,28 @@ export class StudentsService {
     return grade;
   }
 
+  async findOneSubject(subjectId: number) {
+    const subject = await this.prisma.subject.findUnique({
+      where: { id: subjectId },
+    });
+
+    if (!subject) {
+      throw new BusinessRuleException('Subject not found');
+    }
+
+    return subject;
+  }
+
   async updateGrade(gradeDto: GradeDto) {
     if (!gradeDto.gradeId) {
       throw new BusinessRuleException('Grade Id is required');
     }
 
-    if (!gradeDto.value) {
-      throw new BusinessRuleException('Grade value is required');
+    if (!gradeDto.value || gradeDto.value < 0 || gradeDto.value > 100) {
+      throw new BusinessRuleException('Invalid grade');
     }
+
+    await this.findOneGrade(gradeDto.gradeId);
 
     return this.prisma.grade.update({
       where: {
@@ -119,10 +141,22 @@ export class StudentsService {
     });
   }
 
+  async findOneGrade(gradeId: number) {
+    const grade = await this.prisma.grade.findUnique({
+      where: { id: gradeId },
+    });
+
+    if (!grade) {
+      throw new BusinessRuleException('Grade not found');
+    }
+
+    return grade;
+  }
+
   async findAllRecords() {
     await this.findAll();
 
-    const records = this.prisma.grade.findMany({
+    return this.prisma.grade.findMany({
       select: {
         value: true,
         subjectId: true,
@@ -135,12 +169,6 @@ export class StudentsService {
         },
       },
     });
-
-    if (!records) {
-      throw new BusinessRuleException('Grades not found');
-    }
-
-    return records;
   }
 
   async findRecordsByStudent(studentId: number) {
