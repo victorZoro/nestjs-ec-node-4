@@ -22,16 +22,6 @@ export class SubjectsController {
     res.status(HttpStatus.OK).json(subjects);
   }
 
-  @Get(':id')
-  async findOne(
-    @Param() params: { id: number },
-    @Res() res: Response,
-  ): Promise<void> {
-    const subject = await this.subjectService.findOne(Number(params.id));
-
-    res.status(HttpStatus.OK).json(subject);
-  }
-
   @Put(':id')
   async update(
     @Param() params: { id: number },
