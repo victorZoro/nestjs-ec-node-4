@@ -1,0 +1,19 @@
+services:
+  mysqldb:
+    image: mysql:8.0
+    container_name: universitydb
+    volumes:
+      - mysqldb:/var/lib/mysql
+    ports:
+      - ${MYSQL_DATABASE_PORT_MAPPING}
+    expose:
+      - ${MYSQL_DATABASE_EXPOSE_PORT}
+    environment:
+      MYSQL_ROOT_USER: ${MYSQL_DATABASE_USER}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_DATABASE_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      SERVICE_NAME: mysqldb
+    restart: unless-stopped
+volumes:
+  mysqldb:
+
